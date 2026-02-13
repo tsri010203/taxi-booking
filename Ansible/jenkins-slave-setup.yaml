@@ -1,0 +1,31 @@
+- hosts: jenkins-slave
+  become: true
+  tasks: 
+  - name: update ubuntu repo and cache
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: install java
+    apt:
+      name: openjdk-17-jre
+      state: present
+  - name: install docker
+    apt:
+      name: docker.io
+      state: present
+
+  - name: start docker services
+    service:
+      name: docker
+      state: started
+  - name: give 777 permissions on /var/run/docker.sock
+    file:
+      path: /var/run/docker.sock
+      state: file
+      mode: 0777
+
+  - name: start docker on boot time
+    service:
+     name: docker
+     enabled: yes
